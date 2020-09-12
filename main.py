@@ -99,10 +99,12 @@ for index, row in df_trxn.iterrows():
 		df_summ.loc[i, 'Acc Trade amount'] = df_summ.loc[i, 'Acc Trade amount'] + pri*qty
 		df_summ.loc[i, 'Total Fee'] = df_summ.loc[i, 'Total Fee'] + fee
 
-df_summ['Cur Price'] = df_summ['Symbol'].apply(lambda x:get_stock_quote(x))
-df_summ['UnRlz Rev'] = (df_summ['Cur Price'] - df_summ['Avg Price']) * df_summ['OS Qty']
-df_summ['Total P/L'] = df_summ['Rlz Rev'] + df_summ['UnRlz Rev'] - df_summ['Total Fee']
-
+try:
+	df_summ['Cur Price'] = df_summ['Symbol'].apply(lambda x: get_stock_quote(x))
+	df_summ['UnRlz Rev'] = (df_summ['Cur Price'] - df_summ['Avg Price']) * df_summ['OS Qty']
+	df_summ['Total P/L'] = df_summ['Rlz Rev'] + df_summ['UnRlz Rev'] - df_summ['Total Fee']
+except:
+    pass
 
 # ------------------------
 # ------- Dashboard ------
