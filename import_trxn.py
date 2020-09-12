@@ -5,7 +5,7 @@ import pandas as pd
 
 def dataExtract():
 	# -------- READ Transaction Data ----------
-	TradeTrxn_path = os.path.abspath(os.path.join(sys.path[0], os.pardir)) + '\TradeTrxn.xlsx'
+	TradeTrxn_path = os.path.abspath(os.path.join(sys.path[0], os.pardir)) + 'TradeTrxn.xlsx'
 	trxn_futu = pd.read_excel(TradeTrxn_path, sheet_name='FUTU',index_col=0).reset_index()
 	trxn_ibkr = pd.read_excel(TradeTrxn_path, sheet_name='IBKR',index_col=0).reset_index()
 	trxn_hsbc = pd.read_excel(TradeTrxn_path, sheet_name='HSBC',index_col=0).reset_index()
