@@ -112,7 +112,7 @@ except:
 
 
 # -------- Total P/L -------
-st.header(('Total P/L = US$ ' + '{:,.2f}'.format(df_summ['Total P/L'].sum())))
+st.header('Total P/L = US$ ' + '{:,.2f}'.format(df_summ['Total P/L'].sum()))
 
 # -------- Outstanding Portfolio breakdown -------
 df_cur_port = df_summ[df_summ['OS Qty'] > 0]
