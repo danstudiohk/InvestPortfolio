@@ -3,8 +3,8 @@ import sys
 import numpy as np
 import pandas as pd
 
+# -------- READ Transaction Data ----------
 def dataExtract():
-	# -------- READ Transaction Data ----------
 	TradeTrxn_path = os.path.abspath(os.path.join(sys.path[0], os.pardir)) + '/TradeTrxn.xlsx'
 	trxn_futu = pd.read_excel(TradeTrxn_path, sheet_name='FUTU',index_col=0).reset_index()
 	trxn_ibkr = pd.read_excel(TradeTrxn_path, sheet_name='IBKR',index_col=0).reset_index()
@@ -54,3 +54,5 @@ def dataExtract():
 	# -------- Append ----------
 	df_trxn_raw = df_trxn_futu.append(df_trxn_ibkr).append(df_trxn_hsbc).reset_index(drop=True)
 	return df_trxn_raw
+
+
