@@ -101,18 +101,20 @@ for index, row in df_trxn.iterrows():
 
 try:
 	df_summ['Cur Price'] = df_summ['Symbol'].apply(lambda x: get_stock_quote(x))
-	df_summ['UnRlz Rev'] = (df_summ['Cur Price'] - df_summ['Avg Price']) * df_summ['OS Qty']
-	df_summ["Total P/L"] = df_summ['Rlz Rev'] + df_summ['UnRlz Rev'] - df_summ['Total Fee']
 except:
     pass
+	
+df_summ['UnRlz Rev'] = (df_summ['Cur Price'] - df_summ['Avg Price']) * df_summ['OS Qty']
+df_summ["Total PL"] = df_summ['Rlz Rev'] + df_summ['UnRlz Rev'] - df_summ['Total Fee']
+
 
 # ------------------------
 # ------- Dashboard ------
 # ------------------------
 
 
-# -------- Total P/L -------
-st.header('Total P/L = US$ ' + '{:,.2f}'.format(df_summ["Total P/L"].sum()))
+# -------- Total PL -------
+st.header('Total PL = US$ ' + '{:,.2f}'.format(df_summ["Total PL"].sum()))
 
 # -------- Outstanding Portfolio breakdown -------
 df_cur_port = df_summ[df_summ['OS Qty'] > 0]
@@ -132,7 +134,7 @@ def color_negative_red(val):
 # -------- Holding Table -------
 if st.sidebar.checkbox("Show Holdings", False):
 	st.subheader('Holdings')
-	portcurlist = ['Symbol','Cur Value','OS Qty','Cur Price','Avg Price','Rlz Rev','UnRlz Rev',"Total P/L"]
+	portcurlist = ['Symbol','Cur Value','OS Qty','Cur Price','Avg Price','Rlz Rev','UnRlz Rev',"Total PL"]
 	portlist_cursort = ['Cur Value','Symbol']
 	st.table(df_cur_port[portcurlist].sort_values(by = portlist_cursort, ascending=False)
 									.set_index('Symbol')
@@ -141,7 +143,7 @@ if st.sidebar.checkbox("Show Holdings", False):
 									'Avg Price': "${:,.2f}",
 									'Rlz Rev': "${:+,.2f}",
 									'UnRlz Rev': "${:+,.2f}",
-									"Total P/L": "${:+,.2f}"
+									"Total PL": "${:+,.2f}"
 									})
 									.applymap(color_negative_red)
 									)
@@ -152,11 +154,11 @@ if st.sidebar.checkbox("Show Closed", False):
 	st.subheader('Closed')
 	df_cls_port = df_summ[df_summ['OS Qty'] == 0]
 	df_cls_port['Cur Value'] = 0
-	portclslist = ['Symbol',"Total P/L"]
-	portlist_clssort = ["Total P/L",'Symbol']
+	portclslist = ['Symbol',"Total PL"]
+	portlist_clssort = ["Total PL",'Symbol']
 	st.table(df_cls_port[portclslist].sort_values(by = portlist_clssort, ascending=False)
 									.set_index('Symbol')
-									.style.format({"Total P/L": "${:+,.2f}"
+									.style.format({"Total PL": "${:+,.2f}"
 									}))
 
 # --------  Transaction Details-------
