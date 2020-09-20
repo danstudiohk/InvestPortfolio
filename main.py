@@ -2,6 +2,8 @@ import sys
 import os
 import numpy as np
 import pandas as pd
+import sqlite3
+from sqlalchemy import create_engine
 import yfinance as yf
 import plotly.express as px
 import plotly.graph_objects as go
@@ -11,7 +13,6 @@ from datetime import date
 
 # ------ owm modules ------
 from import_trxn import *
-from get_stock_info import *
 
 pd.set_option('display.max_rows', 1000)
 pd.options.display.float_format = '{:,.2f}'.format
@@ -21,11 +22,21 @@ st.header('US Stock Ticker')
 # -------- Transaction Filtering ---------
 # ----------------------------------------
 
+def get_stock_quote(stock_code):
+	ticker = yf.Ticker(stock_code)
+	df_ticker_info = pd.DataFrame.from_dict(ticker.info, orient='index', columns=['values']).reset_index()
+	stock_quote = df_ticker_info[df_ticker_info['index'] == 'regularMarketPrice'].values[0,1]
+	return stock_quote
+
+def color_negative_red(val):
+    color = 'red' if val < 0 else 'black'
+    return 'color: %s' % color
+
+
 df_trxn_raw = dataExtract()
 df_trxn = df_trxn_raw
 
-
-brokerOpt = st.selectbox('Broker',('ALL', 'FUTU', 'IBKR', 'HSBC'))
+brokerOpt = st.sidebar.selectbox('Broker',('ALL', 'FUTU', 'IBKR', 'HSBC'))
 if brokerOpt == 'ALL':
 	df_trxn = df_trxn
 elif brokerOpt == 'FUTU':
@@ -102,10 +113,11 @@ for index, row in df_trxn.iterrows():
 try:
 	df_summ['Cur Price'] = df_summ['Symbol'].apply(lambda x: get_stock_quote(x))
 except:
-    pass
+	pass
 	
 df_summ['UnRlz Rev'] = (df_summ['Cur Price'] - df_summ['Avg Price']) * df_summ['OS Qty']
 df_summ["Total PL"] = df_summ['Rlz Rev'] + df_summ['UnRlz Rev'] - df_summ['Total Fee']
+
 
 
 # ------------------------
@@ -126,13 +138,8 @@ st.plotly_chart(fig)
 
 
 
-def color_negative_red(val):
-    color = 'red' if val < 0 else 'black'
-    return 'color: %s' % color
-
-
 # -------- Holding Table -------
-if st.sidebar.checkbox("Show Holdings", False):
+if st.sidebar.checkbox("Show Holdings"):
 	st.subheader('Holdings')
 	portcurlist = ['Symbol','Cur Value','OS Qty','Cur Price','Avg Price','Rlz Rev','UnRlz Rev',"Total PL"]
 	portlist_cursort = ['Cur Value','Symbol']
@@ -150,7 +157,7 @@ if st.sidebar.checkbox("Show Holdings", False):
 
 
 # -------- Closed Table-------
-if st.sidebar.checkbox("Show Closed", False):
+if st.sidebar.checkbox("Show Closed"):
 	st.subheader('Closed')
 	df_cls_port = df_summ[df_summ['OS Qty'] == 0]
 	df_cls_port['Cur Value'] = 0
@@ -203,3 +210,5 @@ if stockOpt:
 	if st.checkbox("Show Transaction Details", False):
 		st.subheader('Transaction Details')
 		st.table(df_trxn_details)
+	
+
