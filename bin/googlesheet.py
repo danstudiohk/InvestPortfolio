@@ -9,7 +9,7 @@ from google.auth.transport.requests import Request
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # The ID and range of a sample spreadsheet.
-SPREADSHEET_ID = '1bsTeiYfoJJdDsIonbl1EROu60YLLZLFafXUQd8cZa_A'
+SPREADSHEET_ID = ''
 RANGE_NAME = 'FUTU!A2:E'
 
 def main():
