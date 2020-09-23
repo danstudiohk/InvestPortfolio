@@ -172,7 +172,7 @@ if st.sidebar.checkbox("Show Closed"):
 stockOpt = st.sidebar.multiselect('Select Stock',(df_trxn['Symbol'].sort_values().unique()))
 if stockOpt:
 	for s in stockOpt:
-		df_hist = yf.download(s,date(2020,1,1),date.today()).reset_index()
+		df_hist = yf.download(s,date(2020,5,1),date.today()).reset_index()
 		df_hist['Date'] = df_hist['Date'].dt.date
 		df_hist['Symbol'] = s
 		df_trxn_details = df_trxn[df_trxn['Symbol'].isin(stockOpt)]
